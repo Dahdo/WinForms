@@ -28,7 +28,6 @@
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStrip = new ToolStripMenuItem();
-            saveToolStrip = new ToolStripMenuItem();
             saveAsToolStrip = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
             newEntryToolStrip = new ToolStripMenuItem();
@@ -55,9 +54,14 @@
             fileSystemWatcher = new FileSystemWatcher();
             statusStrip = new StatusStrip();
             translateSplitButton = new ToolStripSplitButton();
-            translateProgressBar = new ToolStripProgressBar();
-            contextMenuStrip1 = new ContextMenuStrip(components);
             translateProgressLabel = new ToolStripStatusLabel();
+            translateProgressBar = new ToolStripProgressBar();
+            mainContextMenuStrip = new ContextMenuStrip(components);
+            treeViewImageList = new ImageList(components);
+            nodeRightClickContextMenuStrip = new ContextMenuStrip(components);
+            newGroupMenuItem = new ToolStripMenuItem();
+            newSubGroupMenuItem = new ToolStripMenuItem();
+            deleteGroupMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
             splitContainer.Panel1.SuspendLayout();
@@ -70,6 +74,7 @@
             groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher).BeginInit();
             statusStrip.SuspendLayout();
+            nodeRightClickContextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip
@@ -83,7 +88,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStrip, saveToolStrip, saveAsToolStrip });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStrip, saveAsToolStrip });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -95,17 +100,12 @@
             openToolStrip.Text = "Open";
             openToolStrip.Click += openToolStrip_Click;
             // 
-            // saveToolStrip
-            // 
-            saveToolStrip.Name = "saveToolStrip";
-            saveToolStrip.Size = new Size(120, 22);
-            saveToolStrip.Text = "Save";
-            // 
             // saveAsToolStrip
             // 
             saveAsToolStrip.Name = "saveAsToolStrip";
             saveAsToolStrip.Size = new Size(120, 22);
             saveAsToolStrip.Text = "Save As..";
+            saveAsToolStrip.Click += saveAsToolStrip_Click;
             // 
             // editToolStripMenuItem
             // 
@@ -117,14 +117,17 @@
             // newEntryToolStrip
             // 
             newEntryToolStrip.Name = "newEntryToolStrip";
-            newEntryToolStrip.Size = new Size(137, 22);
+            newEntryToolStrip.Size = new Size(161, 22);
             newEntryToolStrip.Text = "New Entry";
+            newEntryToolStrip.Click += newEntryToolStrip_Click;
             // 
             // deleteEntryToolStrip
             // 
             deleteEntryToolStrip.Name = "deleteEntryToolStrip";
-            deleteEntryToolStrip.Size = new Size(137, 22);
+            deleteEntryToolStrip.ShortcutKeys = Keys.Delete;
+            deleteEntryToolStrip.Size = new Size(161, 22);
             deleteEntryToolStrip.Text = "Delete Entry";
+            deleteEntryToolStrip.Click += deleteEntryToolStrip_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -157,6 +160,7 @@
             treeView.Size = new Size(261, 412);
             treeView.TabIndex = 0;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
+            treeView.MouseDown += treeView_MouseDown;
             // 
             // tabControl
             // 
@@ -185,13 +189,13 @@
             // 
             searchListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             searchListView.Columns.AddRange(new ColumnHeader[] { locKeyColumn, pathColumn, debugColumn });
-            searchListView.FullRowSelect = true;
             searchListView.Location = new Point(3, 38);
             searchListView.Name = "searchListView";
             searchListView.Size = new Size(505, 343);
             searchListView.TabIndex = 1;
             searchListView.UseCompatibleStateImageBehavior = false;
             searchListView.View = View.Details;
+            searchListView.DoubleClick += searchListView_DoubleClick;
             // 
             // locKeyColumn
             // 
@@ -290,6 +294,7 @@
             debugTextBox.Name = "debugTextBox";
             debugTextBox.Size = new Size(499, 115);
             debugTextBox.TabIndex = 1;
+            debugTextBox.TextChanged += debugTextBox_TextChanged;
             // 
             // pathTextBox
             // 
@@ -300,6 +305,7 @@
             pathTextBox.Size = new Size(499, 23);
             pathTextBox.TabIndex = 0;
             pathTextBox.TextAlign = HorizontalAlignment.Center;
+            pathTextBox.KeyPress += pathTextBox_KeyPress;
             // 
             // fileSystemWatcher
             // 
@@ -324,6 +330,11 @@
             translateSplitButton.Size = new Size(69, 20);
             translateSplitButton.Text = "Translate";
             // 
+            // translateProgressLabel
+            // 
+            translateProgressLabel.Name = "translateProgressLabel";
+            translateProgressLabel.Size = new Size(0, 17);
+            // 
             // translateProgressBar
             // 
             translateProgressBar.Alignment = ToolStripItemAlignment.Right;
@@ -331,15 +342,46 @@
             translateProgressBar.RightToLeft = RightToLeft.No;
             translateProgressBar.Size = new Size(100, 16);
             // 
-            // contextMenuStrip1
+            // mainContextMenuStrip
             // 
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(61, 4);
+            mainContextMenuStrip.Name = "contextMenuStrip1";
+            mainContextMenuStrip.Size = new Size(61, 4);
             // 
-            // translateProgressLabel
+            // treeViewImageList
             // 
-            translateProgressLabel.Name = "translateProgressLabel";
-            translateProgressLabel.Size = new Size(0, 17);
+            treeViewImageList.ColorDepth = ColorDepth.Depth8Bit;
+            treeViewImageList.ImageStream = (ImageListStreamer)resources.GetObject("treeViewImageList.ImageStream");
+            treeViewImageList.TransparentColor = Color.Transparent;
+            treeViewImageList.Images.SetKeyName(0, "folderIcon");
+            treeViewImageList.Images.SetKeyName(1, "fileIcon");
+            // 
+            // nodeRightClickContextMenuStrip
+            // 
+            nodeRightClickContextMenuStrip.AllowDrop = true;
+            nodeRightClickContextMenuStrip.Items.AddRange(new ToolStripItem[] { newGroupMenuItem, newSubGroupMenuItem, deleteGroupMenuItem });
+            nodeRightClickContextMenuStrip.Name = "contextMenuStrip2";
+            nodeRightClickContextMenuStrip.Size = new Size(181, 92);
+            // 
+            // newGroupMenuItem
+            // 
+            newGroupMenuItem.Name = "newGroupMenuItem";
+            newGroupMenuItem.Size = new Size(180, 22);
+            newGroupMenuItem.Text = "New Group";
+            newGroupMenuItem.Click += newGroupMenuItem_Click;
+            // 
+            // newSubGroupMenuItem
+            // 
+            newSubGroupMenuItem.Name = "newSubGroupMenuItem";
+            newSubGroupMenuItem.Size = new Size(180, 22);
+            newSubGroupMenuItem.Text = "New SubGroup";
+            newSubGroupMenuItem.Click += newSubGroupMenuItem_Click;
+            // 
+            // deleteGroupMenuItem
+            // 
+            deleteGroupMenuItem.Name = "deleteGroupMenuItem";
+            deleteGroupMenuItem.Size = new Size(180, 22);
+            deleteGroupMenuItem.Text = "Delete Group";
+            deleteGroupMenuItem.Click += deleteGroupMenuItem_Click;
             // 
             // LocManager
             // 
@@ -372,6 +414,7 @@
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher).EndInit();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            nodeRightClickContextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -381,7 +424,6 @@
         private MenuStrip menuStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem openToolStrip;
-        private ToolStripMenuItem saveToolStrip;
         private ToolStripMenuItem saveAsToolStrip;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem newEntryToolStrip;
@@ -395,7 +437,7 @@
         private StatusStrip statusStrip;
         private TabPage searchTab;
         private GroupBox groupBox;
-        private ContextMenuStrip contextMenuStrip1;
+        private ContextMenuStrip mainContextMenuStrip;
         private TextBox debugTextBox;
         private TextBox pathTextBox;
         private ListView detailsListView;
@@ -412,5 +454,10 @@
         private ToolStripSplitButton translateSplitButton;
         private ToolStripProgressBar translateProgressBar;
         private ToolStripStatusLabel translateProgressLabel;
+        private ImageList treeViewImageList;
+        private ContextMenuStrip nodeRightClickContextMenuStrip;
+        private ToolStripMenuItem newGroupMenuItem;
+        private ToolStripMenuItem newSubGroupMenuItem;
+        private ToolStripMenuItem deleteGroupMenuItem;
     }
 }
