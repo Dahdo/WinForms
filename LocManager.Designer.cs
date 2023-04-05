@@ -161,6 +161,7 @@
             treeView.TabIndex = 0;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
             treeView.MouseDown += treeView_MouseDown;
+            treeView.MouseHover += treeView_MouseHover;
             // 
             // tabControl
             // 
@@ -305,6 +306,7 @@
             pathTextBox.Size = new Size(499, 23);
             pathTextBox.TabIndex = 0;
             pathTextBox.TextAlign = HorizontalAlignment.Center;
+            pathTextBox.KeyDown += pathTextBox_KeyDown;
             pathTextBox.KeyPress += pathTextBox_KeyPress;
             // 
             // fileSystemWatcher
@@ -360,26 +362,26 @@
             nodeRightClickContextMenuStrip.AllowDrop = true;
             nodeRightClickContextMenuStrip.Items.AddRange(new ToolStripItem[] { newGroupMenuItem, newSubGroupMenuItem, deleteGroupMenuItem });
             nodeRightClickContextMenuStrip.Name = "contextMenuStrip2";
-            nodeRightClickContextMenuStrip.Size = new Size(181, 92);
+            nodeRightClickContextMenuStrip.Size = new Size(155, 70);
             // 
             // newGroupMenuItem
             // 
             newGroupMenuItem.Name = "newGroupMenuItem";
-            newGroupMenuItem.Size = new Size(180, 22);
+            newGroupMenuItem.Size = new Size(154, 22);
             newGroupMenuItem.Text = "New Group";
             newGroupMenuItem.Click += newGroupMenuItem_Click;
             // 
             // newSubGroupMenuItem
             // 
             newSubGroupMenuItem.Name = "newSubGroupMenuItem";
-            newSubGroupMenuItem.Size = new Size(180, 22);
+            newSubGroupMenuItem.Size = new Size(154, 22);
             newSubGroupMenuItem.Text = "New SubGroup";
             newSubGroupMenuItem.Click += newSubGroupMenuItem_Click;
             // 
             // deleteGroupMenuItem
             // 
             deleteGroupMenuItem.Name = "deleteGroupMenuItem";
-            deleteGroupMenuItem.Size = new Size(180, 22);
+            deleteGroupMenuItem.Size = new Size(154, 22);
             deleteGroupMenuItem.Text = "Delete Group";
             deleteGroupMenuItem.Click += deleteGroupMenuItem_Click;
             // 

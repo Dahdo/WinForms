@@ -221,6 +221,8 @@ namespace WinFormsLab {
                 prePath = treeView.SelectedNode.Text + "-";
                 pathTextBox.Text = prePath;
                 pathTextBox.ReadOnly = false;
+                pathTextBox.SelectionStart = pathTextBox.Text.Length;
+                pathTextBox.SelectionLength = 0;
             }
         }
 
@@ -240,7 +242,16 @@ namespace WinFormsLab {
                 selectedNode = newEntryNode;
             }
         }
+        private void pathTextBox_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Back) {
+                if (pathTextBox.Text.Length <= prePath.Length) {
+                    e.SuppressKeyPress = true;
+                }
+            }
+        }
 
+        //reference for the next 4 functions below
+        //https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.treeview.afterlabeledit?view=windowsdesktop-8.0
         private void treeView_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Right) {
                 TreeNode node = treeView.GetNodeAt(e.X, e.Y);
@@ -288,10 +299,14 @@ namespace WinFormsLab {
             else
                 upperNode.Nodes.Add(groupNode);
             treeView.SelectedNode.Expand();
-            if(!groupNode.IsEditing) {
+            if (!groupNode.IsEditing) {
                 groupNode.BeginEdit();
             }
             treeView.EndUpdate();
+        }
+
+        private void treeView_MouseHover(object sender, EventArgs e) {
+            treeView.Cursor = Cursors.VSplit;
         }
     }
 
