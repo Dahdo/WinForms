@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
@@ -11,7 +12,7 @@ namespace WinFormsLab {
         TreeNode selectedNode;
         TreeNode selectedGroupNode;
         bool currentlyOpenFile = false;
-        string translateLang = "English";
+        string translateLang = "EN";
         string translatedText;
         string prePath;
 
@@ -265,11 +266,24 @@ namespace WinFormsLab {
                 }
             }
         }
-
+        public void deleteSubGroup(TreeNode nodes) {
+            foreach(TreeNode node in nodes.Nodes) {
+                if (node.Tag == "group")
+                    deleteSubGroup(node);
+                else
+                    treeViewElementDict.Remove(node);
+            }
+        }
         private void deleteGroupMenuItem_Click(object sender, EventArgs e) {
             treeView.BeginUpdate();
+            foreach(TreeNode node in treeView.SelectedNode.Nodes) {
+                deleteSubGroup(node);
+            }
             treeView.SelectedNode.Remove();
             treeView.EndUpdate();
+            debugTextBox.Clear();
+            pathTextBox.Clear();
+            detailsListView.Items.Clear();
         }
 
         private void newSubGroupMenuItem_Click(object sender, EventArgs e) {
@@ -311,10 +325,10 @@ namespace WinFormsLab {
         private void treeView_MouseHover(object sender, EventArgs e) {
             treeView.Cursor = Cursors.VSplit;
         }
-
+        //https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/walkthrough-implementing-a-form-that-uses-a-background-operation?view=netframeworkdesktop-4.8
         private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) {
             BackgroundWorker worker = sender as BackgroundWorker;
-            translatedText = Translator.Translate("English", translateLang, debugTextBox.Text);
+            translatedText = Translator.Translate("EN", translateLang, debugTextBox.Text);
             worker.ReportProgress(100);
         }
 
@@ -336,7 +350,7 @@ namespace WinFormsLab {
         }
         
         private void translateEnglishItem_Click(object sender, EventArgs e) {
-            translateLang = "English";
+            translateLang = "EN";
             translateChiniseItem.Checked = false;
             translatePortugueseItem.Checked = false;
             translatePolishItem.Checked = false;
@@ -345,7 +359,7 @@ namespace WinFormsLab {
         }
 
         private void translatePolishItem_Click(object sender, EventArgs e) {
-            translateLang = "Polish";
+            translateLang = "PL";
             translateChiniseItem.Checked = false;
             translatePortugueseItem.Checked = false;
             translatePolishItem.Checked = true;
@@ -354,7 +368,7 @@ namespace WinFormsLab {
         }
 
         private void translateSpanishItem_Click(object sender, EventArgs e) {
-            translateLang = "Spanish";
+            translateLang = "ES";
             translateChiniseItem.Checked = false;
             translatePortugueseItem.Checked = false;
             translatePolishItem.Checked = false;
@@ -363,7 +377,7 @@ namespace WinFormsLab {
         }
 
         private void translatePortugueseItem_Click(object sender, EventArgs e) {
-            translateLang = "Portuguese";
+            translateLang = "PT";
             translateChiniseItem.Checked = false;
             translatePortugueseItem.Checked = true;
             translatePolishItem.Checked = false;
@@ -372,7 +386,7 @@ namespace WinFormsLab {
         }
 
         private void translateChiniseItem_Click(object sender, EventArgs e) {
-            translateLang = "Chinise";
+            translateLang = "ZH";
             translateChiniseItem.Checked = true;
             translatePortugueseItem.Checked = false;
             translatePolishItem.Checked = false;
@@ -381,6 +395,7 @@ namespace WinFormsLab {
         }
 
         private void translateSplitButton_ButtonClick(object sender, EventArgs e) {
+            translateProgressBar.Value = 0;
             backgroundWorker.RunWorkerAsync();
         }
     }
