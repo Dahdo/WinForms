@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -10,6 +11,8 @@ namespace WinFormsLab {
         TreeNode selectedNode;
         TreeNode selectedGroupNode;
         bool currentlyOpenFile = false;
+        string translateLang = "English";
+        string translatedText;
         string prePath;
 
         public LocManager() {
@@ -308,6 +311,78 @@ namespace WinFormsLab {
         private void treeView_MouseHover(object sender, EventArgs e) {
             treeView.Cursor = Cursors.VSplit;
         }
+
+        private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            translatedText = Translator.Translate("English", translateLang, debugTextBox.Text);
+            worker.ReportProgress(100);
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e) {
+            translateProgressBar.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e) {
+            if (e.Error != null) {
+                MessageBox.Show(e.Error.Message);
+            }
+            else {
+                if (selectedNode == null)
+                    return;
+                treeViewElementDict[selectedNode].Translations.Add(translateLang, translatedText);
+                updateDetailsTab(selectedNode);
+                translatedText = string.Empty;
+            }
+        }
+        
+        private void translateEnglishItem_Click(object sender, EventArgs e) {
+            translateLang = "English";
+            translateChiniseItem.Checked = false;
+            translatePortugueseItem.Checked = false;
+            translatePolishItem.Checked = false;
+            translateSpanishItem.Checked = false;
+            translateEnglishItem.Checked = true;
+        }
+
+        private void translatePolishItem_Click(object sender, EventArgs e) {
+            translateLang = "Polish";
+            translateChiniseItem.Checked = false;
+            translatePortugueseItem.Checked = false;
+            translatePolishItem.Checked = true;
+            translateSpanishItem.Checked = false;
+            translateEnglishItem.Checked = false;
+        }
+
+        private void translateSpanishItem_Click(object sender, EventArgs e) {
+            translateLang = "Spanish";
+            translateChiniseItem.Checked = false;
+            translatePortugueseItem.Checked = false;
+            translatePolishItem.Checked = false;
+            translateSpanishItem.Checked = true;
+            translateEnglishItem.Checked = false;
+        }
+
+        private void translatePortugueseItem_Click(object sender, EventArgs e) {
+            translateLang = "Portuguese";
+            translateChiniseItem.Checked = false;
+            translatePortugueseItem.Checked = true;
+            translatePolishItem.Checked = false;
+            translateSpanishItem.Checked = false;
+            translateEnglishItem.Checked = false;
+        }
+
+        private void translateChiniseItem_Click(object sender, EventArgs e) {
+            translateLang = "Chinise";
+            translateChiniseItem.Checked = true;
+            translatePortugueseItem.Checked = false;
+            translatePolishItem.Checked = false;
+            translateSpanishItem.Checked = false;
+            translateEnglishItem.Checked = false;
+        }
+
+        private void translateSplitButton_ButtonClick(object sender, EventArgs e) {
+            backgroundWorker.RunWorkerAsync();
+        }
     }
 
     public class TreeViewElement {
@@ -328,5 +403,27 @@ namespace WinFormsLab {
 
 
 
+    }
+
+    public static class Translator {
+        public static string Translate(string languageFrom, string languateTo, string text) {
+            HttpClient client = new HttpClient();
+            {
+                HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://translate.googleapis.com/translate_a/single?client=gtx&sl={languageFrom}&tl={languateTo}&dt=t&q={text}");
+
+                HttpResponseMessage responseMessage = client.Send(requestMessage);
+
+                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK) {
+                    string translationContent = responseMessage.Content.ReadAsStringAsync().Result;
+
+                    int firstApostrophe = translationContent.IndexOf("\""); int secondApostrophe = translationContent.IndexOf("\"", firstApostrophe + 1);
+
+                    return translationContent.Substring(firstApostrophe + 1, secondApostrophe - firstApostrophe - 1);
+                }
+            }
+            
+
+            return string.Empty;
+        }
     }
 }

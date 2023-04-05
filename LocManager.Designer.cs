@@ -54,6 +54,11 @@
             fileSystemWatcher = new FileSystemWatcher();
             statusStrip = new StatusStrip();
             translateSplitButton = new ToolStripSplitButton();
+            translateEnglishItem = new ToolStripMenuItem();
+            translatePolishItem = new ToolStripMenuItem();
+            translateSpanishItem = new ToolStripMenuItem();
+            translatePortugueseItem = new ToolStripMenuItem();
+            translateChiniseItem = new ToolStripMenuItem();
             translateProgressLabel = new ToolStripStatusLabel();
             translateProgressBar = new ToolStripProgressBar();
             mainContextMenuStrip = new ContextMenuStrip(components);
@@ -62,6 +67,7 @@
             newGroupMenuItem = new ToolStripMenuItem();
             newSubGroupMenuItem = new ToolStripMenuItem();
             deleteGroupMenuItem = new ToolStripMenuItem();
+            backgroundWorker = new System.ComponentModel.BackgroundWorker();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
             splitContainer.Panel1.SuspendLayout();
@@ -325,12 +331,54 @@
             // 
             // translateSplitButton
             // 
-            translateSplitButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            translateSplitButton.Image = (Image)resources.GetObject("translateSplitButton.Image");
+            translateSplitButton.DropDownItems.AddRange(new ToolStripItem[] { translateEnglishItem, translatePolishItem, translateSpanishItem, translatePortugueseItem, translateChiniseItem });
             translateSplitButton.ImageTransparentColor = Color.Magenta;
             translateSplitButton.Name = "translateSplitButton";
             translateSplitButton.Size = new Size(69, 20);
             translateSplitButton.Text = "Translate";
+            translateSplitButton.ButtonClick += translateSplitButton_ButtonClick;
+            // 
+            // translateEnglishItem
+            // 
+            translateEnglishItem.Checked = true;
+            translateEnglishItem.CheckOnClick = true;
+            translateEnglishItem.CheckState = CheckState.Checked;
+            translateEnglishItem.Name = "translateEnglishItem";
+            translateEnglishItem.Size = new Size(134, 22);
+            translateEnglishItem.Text = "English";
+            translateEnglishItem.Click += translateEnglishItem_Click;
+            // 
+            // translatePolishItem
+            // 
+            translatePolishItem.CheckOnClick = true;
+            translatePolishItem.Name = "translatePolishItem";
+            translatePolishItem.Size = new Size(134, 22);
+            translatePolishItem.Text = "Polish";
+            translatePolishItem.Click += translatePolishItem_Click;
+            // 
+            // translateSpanishItem
+            // 
+            translateSpanishItem.CheckOnClick = true;
+            translateSpanishItem.Name = "translateSpanishItem";
+            translateSpanishItem.Size = new Size(134, 22);
+            translateSpanishItem.Text = "Spanish";
+            translateSpanishItem.Click += translateSpanishItem_Click;
+            // 
+            // translatePortugueseItem
+            // 
+            translatePortugueseItem.CheckOnClick = true;
+            translatePortugueseItem.Name = "translatePortugueseItem";
+            translatePortugueseItem.Size = new Size(134, 22);
+            translatePortugueseItem.Text = "Portuguese";
+            translatePortugueseItem.Click += translatePortugueseItem_Click;
+            // 
+            // translateChiniseItem
+            // 
+            translateChiniseItem.CheckOnClick = true;
+            translateChiniseItem.Name = "translateChiniseItem";
+            translateChiniseItem.Size = new Size(134, 22);
+            translateChiniseItem.Text = "Chinise";
+            translateChiniseItem.Click += translateChiniseItem_Click;
             // 
             // translateProgressLabel
             // 
@@ -384,6 +432,14 @@
             deleteGroupMenuItem.Size = new Size(154, 22);
             deleteGroupMenuItem.Text = "Delete Group";
             deleteGroupMenuItem.Click += deleteGroupMenuItem_Click;
+            // 
+            // backgroundWorker
+            // 
+            backgroundWorker.WorkerReportsProgress = true;
+            backgroundWorker.WorkerSupportsCancellation = true;
+            backgroundWorker.DoWork += backgroundWorker_DoWork;
+            backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
+            backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
             // LocManager
             // 
@@ -453,7 +509,6 @@
         private ColumnHeader pathColumn;
         private ColumnHeader debugColumn;
         private Button searchButton;
-        private ToolStripSplitButton translateSplitButton;
         private ToolStripProgressBar translateProgressBar;
         private ToolStripStatusLabel translateProgressLabel;
         private ImageList treeViewImageList;
@@ -461,5 +516,12 @@
         private ToolStripMenuItem newGroupMenuItem;
         private ToolStripMenuItem newSubGroupMenuItem;
         private ToolStripMenuItem deleteGroupMenuItem;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private ToolStripSplitButton translateSplitButton;
+        private ToolStripMenuItem translateChiniseItem;
+        private ToolStripMenuItem translatePortugueseItem;
+        private ToolStripMenuItem translateSpanishItem;
+        private ToolStripMenuItem translatePolishItem;
+        private ToolStripMenuItem translateEnglishItem;
     }
 }

@@ -32,3 +32,4 @@ C:\Users\Daniel\ProgrammingInGraphicalEnv\WinFormsLab\obj\Debug\net6.0-windows\r
 C:\Users\Daniel\ProgrammingInGraphicalEnv\WinFormsLab\obj\Debug\net6.0-windows\WinFormsLab.pdb
 C:\Users\Daniel\ProgrammingInGraphicalEnv\WinFormsLab\obj\Debug\net6.0-windows\WinFormsLab.genruntimeconfig.cache
 C:\Users\Daniel\ProgrammingInGraphicalEnv\WinFormsLab\obj\Debug\net6.0-windows\ref\WinFormsLab.dll
+C:\Users\Daniel\ProgrammingInGraphicalEnv\WinFormsLab\obj\Debug\net6.0-windows\WinFormsLab.Properties.Resources.resources
